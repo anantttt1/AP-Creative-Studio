@@ -141,11 +141,18 @@ function dateKey(date) {
 function renderMonthLabels(start, cellCount) {
   const months = [];
   let previousMonth = -1;
+  let previousWeek = -1;
   for (let i = 0; i < cellCount; i++) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
+    const week = Math.floor(i / 7) + 1;
     if (day.getMonth() !== previousMonth) {
-      months.push({ week: Math.floor(i / 7) + 1, label: day.toLocaleDateString("en", { month: "short" }) });
+      // A month can start in the same heatmap column as the previous month.
+      // Render one label per column so the month row never wraps vertically.
+      if (week !== previousWeek) {
+        months.push({ week, label: day.toLocaleDateString("en", { month: "short" }) });
+        previousWeek = week;
+      }
       previousMonth = day.getMonth();
     }
   }
