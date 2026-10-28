@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420" role="img" aria-label="AI / DATA SYSTEM placeholder preview">
+ <defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#140a20"/><stop offset="1" stop-color="#080611"/></linearGradient>
+  <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0e726a" stop-opacity=".85"/><stop offset="1" stop-color="#248fc2" stop-opacity=".12"/></linearGradient>
+  <linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#248fc2"/><stop offset="1" stop-color="#d8ff48"/></linearGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+ </defs>
+ <rect width="800" height="420" fill="url(#bg)"/>
+ <circle cx="145" cy="70" r="140" fill="#0e726a" opacity=".25" filter="url(#blur)"/>
+ <circle cx="720" cy="325" r="160" fill="#248fc2" opacity=".16" filter="url(#blur)"/>
+ <g transform="translate(84 48) rotate(-3 310 155)">
+  <rect x="20" y="18" width="618" height="300" rx="9" fill="#50196c" opacity=".28"/>
+  <rect width="618" height="300" rx="8" fill="#0b0713" stroke="#8c55a1" stroke-opacity=".75" stroke-width="2"/>
+  <path d="M8 0h602a8 8 0 0 1 8 8v31H0V8a8 8 0 0 1 8-8Z" fill="#1b1026"/>
+  <circle cx="18" cy="19" r="4" fill="#248fc2"/><circle cx="33" cy="19" r="4" fill="#d8ff48"/><circle cx="48" cy="19" r="4" fill="#9f82b2"/>
+  <rect x="78" y="14" width="230" height="9" rx="4" fill="#382145"/>
+  <rect x="24" y="64" width="300" height="10" rx="4" fill="url(#line)" opacity=".8"/>
+  <rect x="24" y="84" width="183" height="7" rx="3" fill="#655277" opacity=".7"/>
+  <rect x="24" y="112" width="174" height="54" rx="5" fill="url(#glow)" stroke="#248fc2" stroke-opacity=".3"/>
+  <rect x="208" y="112" width="174" height="54" rx="5" fill="url(#glow)" stroke="#d8ff48" stroke-opacity=".22"/>
+  <rect x="392" y="112" width="201" height="54" rx="5" fill="url(#glow)" stroke="#248fc2" stroke-opacity=".22"/>
+  <path d="M25 198h285M25 215h215M25 232h256" stroke="#4e3b60" stroke-width="5" stroke-linecap="round"/>
+  <rect x="24" y="256" width="124" height="24" rx="3" fill="#0e726a" fill-opacity=".45" stroke="#248fc2" stroke-opacity=".5"/>
+  <rect x="160" y="256" width="124" height="24" rx="3" fill="#24152f" stroke="#715088" stroke-opacity=".7"/>
+  <rect x="296" y="256" width="124" height="24" rx="3" fill="#24152f" stroke="#715088" stroke-opacity=".7"/>
+  <rect x="432" y="256" width="160" height="24" rx="3" fill="#20122d" stroke="#d8ff48" stroke-opacity=".4"/>
+ </g>
+ <text x="750" y="395" text-anchor="end" fill="#d8ff48" opacity=".9" font-family="monospace" font-size="12" letter-spacing="3">AI / DATA SYSTEM</text>
+</svg>
