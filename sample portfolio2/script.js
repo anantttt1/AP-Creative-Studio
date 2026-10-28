@@ -50,7 +50,8 @@ const PORTFOLIO = {
 };
 const $ = selector => document.querySelector(selector);
 const safe = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-const externalLink = (url, fallback = "#") => /^https?:\/\//i.test(url || "") ? url : fallback;
+const validHttpUrl = value => /^https?:\/\//i.test(String(value || ""));
+const externalUrl = (value, fallback = "#") => validHttpUrl(value) ? value : fallback;
 
 function renderPortfolio() {
   const name = PORTFOLIO.name || "Your Name";
@@ -58,7 +59,7 @@ function renderPortfolio() {
   $("#footerName").textContent = name.toUpperCase();
   $("#signatureName").textContent = name.toUpperCase();
   $("#heroNameSmall").textContent = name.toUpperCase();
-  $("#heroRole").textContent = PORTFOLIO.role;
+  $("#heroRole").textContent = PORTFOLIO.role || "Your Role · Your Speciality";
   $("#heroBio").textContent = PORTFOLIO.about;
   $("#heroLocation").textContent = PORTFOLIO.location;
   $("#heroFocus").textContent = PORTFOLIO.focus;
@@ -69,134 +70,277 @@ function renderPortfolio() {
   $("#aboutExtra").textContent = PORTFOLIO.aboutExtra;
   $("#educationIntro").textContent = PORTFOLIO.educationIntro;
   $("#copyrightYear").textContent = new Date().getFullYear();
-  $("#resumeLink").href = PORTFOLIO.resumeUrl || "#contact";
-  $("#socialLinks").innerHTML = PORTFOLIO.socials.map(s => '<a href="' + safe(s.url) + '" title="' + safe(s.title) + '" target="_blank" rel="noreferrer">' + safe(s.label) + '</a>').join("");
-  $("#aboutFacts").innerHTML = PORTFOLIO.facts.map((fact, i) => '<span><b>' + String(i + 1).padStart(2, "0") + '</b> ' + safe(fact) + '</span>').join("");
-  $("#skillsGrid").innerHTML = PORTFOLIO.skills.map(group => '<article class="skill-card"><span class="skill-icon">' + safe(group.icon) + '</span><h3>' + safe(group.category) + '</h3><p>' + safe(group.description) + '</p><div class="skill-tags">' + group.items.map(item => '<span>' + safe(item) + '</span>').join("") + '</div></article>').join("");
-  $("#projectsGrid").innerHTML = PORTFOLIO.projects.map((project, index) => '<article class="project-card" data-category="' + safe(project.category) + '"><a class="project-image" href="' + safe(externalLink(project.demo || project.source, "#contact")) + '" ' + (project.demo || project.source ? 'target="_blank" rel="noreferrer"' : '') + '><img src="' + safe(project.image) + '" alt="' + safe(project.title) + ' preview" loading="lazy"></a><div class="project-body"><div class="project-meta"><span>PROJECT / ' + String(index + 1).padStart(2, "0") + ' · ' + safe(project.type) + '</span><span>MONTH YYYY</span></div><h3>' + safe(project.title) + '</h3><p>' + safe(project.description) + '</p><div class="skill-tags">' + project.tech.map(t => '<span>' + safe(t) + '</span>').join("") + '</div><div class="project-links">' + (project.demo ? '<a href="' + safe(externalLink(project.demo)) + '" target="_blank" rel="noreferrer">Live Demo ↗</a>' : '') + (project.source ? '<a href="' + safe(externalLink(project.source)) + '" target="_blank" rel="noreferrer">Source Code ↗</a>' : '') + '</div></div></article>').join("");
-  $("#timeline").innerHTML = PORTFOLIO.education.map(item => '<article class="timeline-item"><span>' + safe(item.date) + '</span><h3>' + safe(item.title) + '</h3><p>' + safe(item.place) + '</p><p>' + safe(item.description) + '</p></article>').join("");
-  $("#certificatesGrid").innerHTML = PORTFOLIO.certificates.map((item, i) => '<article class="certificate-card"><span class="certificate-icon">' + ["✧","◇","⌘","✳"][i % 4] + '</span><div class="certificate-copy"><span>CERTIFICATE / CREDENTIAL ' + String(i + 1).padStart(2, "0") + '</span><h3>' + safe(item.title) + '</h3><p>' + safe(item.issuer) + ' · ' + safe(item.date) + (item.url ? ' · <a href="' + safe(externalLink(item.url)) + '" target="_blank" rel="noreferrer">View certificate ↗</a>' : '') + '</p></div></article>').join("");
-  $("#contactDetails").innerHTML = '<span>✉ &nbsp; <a href="mailto:' + safe(PORTFOLIO.email) + '">' + safe(PORTFOLIO.email) + '</a></span><span>⌖ &nbsp; ' + safe(PORTFOLIO.location) + '</span><span>↗ &nbsp; <a href="' + safe(externalLink(PORTFOLIO.linkedinUrl)) + '" target="_blank" rel="noreferrer">LinkedIn profile</a></span>';
+  $("#resumeLink").href = PORTFOLIO.resumeUrl && validHttpUrl(PORTFOLIO.resumeUrl) ? PORTFOLIO.resumeUrl : "#contact";
+  $("#socialLinks").innerHTML = PORTFOLIO.socials.map(item => {
+    const url = String(item.url || "");
+    const href = url.startsWith("mailto:") ? url : externalUrl(url, "#contact");
+    return '<a href="' + safe(href) + '" title="' + safe(item.title || item.label) + '" rel="noreferrer">' + safe(item.label) + '</a>';
+  }).join("");
+  $("#aboutFacts").innerHTML = PORTFOLIO.facts.map((fact, index) => '<span><b>' + String(index + 1).padStart(2, "0") + '</b> ' + safe(fact) + '</span>').join("");
+  $("#skillsGrid").innerHTML = PORTFOLIO.skills.map(group =>
+    '<article class="skill-card"><span class="skill-icon" aria-hidden="true">' + safe(group.icon) + '</span><h3>' + safe(group.category) + '</h3><p>' + safe(group.description) + '</p><div class="skill-tags">' +
+    group.items.map(item => '<span>' + safe(item) + '</span>').join("") + '</div></article>'
+  ).join("");
+
+  $("#projectsGrid").innerHTML = PORTFOLIO.projects.map((project, index) => {
+    const projectUrl = validHttpUrl(project.demo) ? project.demo : (validHttpUrl(project.source) ? project.source : "");
+    const image = '<img src="' + safe(project.image) + '" alt="' + safe(project.title) + ' preview" loading="lazy" decoding="async">';
+    const preview = projectUrl
+      ? '<a class="project-image" href="' + safe(projectUrl) + '" target="_blank" rel="noopener noreferrer" aria-label="Open ' + safe(project.title) + '">' + image + '</a>'
+      : '<div class="project-image" aria-label="' + safe(project.title) + ' preview">' + image + '</div>';
+    const links = [
+      validHttpUrl(project.demo) ? '<a href="' + safe(project.demo) + '" target="_blank" rel="noopener noreferrer">Live Demo ↗</a>' : "",
+      validHttpUrl(project.source) ? '<a href="' + safe(project.source) + '" target="_blank" rel="noopener noreferrer">Source Code ↗</a>' : ""
+    ].filter(Boolean).join("");
+    const dateLabel = project.date ? safe(project.date) : "FEATURED PROJECT";
+    return '<article class="project-card" data-category="' + safe(project.category) + '">' + preview +
+      '<div class="project-body"><div class="project-meta"><span>PROJECT / ' + String(index + 1).padStart(2, "0") + ' · ' + safe(project.type) + '</span><span>' + dateLabel + '</span></div>' +
+      '<h3>' + safe(project.title) + '</h3><p>' + safe(project.description) + '</p><div class="skill-tags">' +
+      project.tech.map(tech => '<span>' + safe(tech) + '</span>').join("") + '</div>' +
+      (links ? '<div class="project-links">' + links + '</div>' : '') + '</div></article>';
+  }).join("");
+
+  $("#timeline").innerHTML = PORTFOLIO.education.map(item =>
+    '<article class="timeline-item"><span>' + safe(item.date) + '</span><h3>' + safe(item.title) + '</h3><p>' +
+    safe(item.place) + '</p><p>' + safe(item.description) + '</p></article>'
+  ).join("");
+  $("#certificatesGrid").innerHTML = PORTFOLIO.certificates.map((item, index) =>
+    '<article class="certificate-card"><span class="certificate-icon" aria-hidden="true">' + ["✧", "◇", "⌘", "✳"][index % 4] +
+    '</span><div class="certificate-copy"><span>CERTIFICATE / CREDENTIAL ' + String(index + 1).padStart(2, "0") +
+    '</span><h3>' + safe(item.title) + '</h3><p>' + safe(item.issuer) + (item.date ? ' · ' + safe(item.date) : '') +
+    (validHttpUrl(item.url) ? ' · <a href="' + safe(item.url) + '" target="_blank" rel="noopener noreferrer">View certificate ↗</a>' : '') +
+    '</p></div></article>'
+  ).join("");
+
+  $("#contactDetails").innerHTML = '<span>✉ &nbsp; <a href="mailto:' + safe(PORTFOLIO.email) + '">' + safe(PORTFOLIO.email) +
+    '</a></span><span>⌖ &nbsp; ' + safe(PORTFOLIO.location) + '</span><span>↗ &nbsp; <a href="' +
+    safe(externalUrl(PORTFOLIO.linkedinUrl, "https://www.linkedin.com/")) + '" target="_blank" rel="noopener noreferrer">LinkedIn profile</a></span>';
+
   $("#githubLink").href = PORTFOLIO.githubUsername ? "https://github.com/" + encodeURIComponent(PORTFOLIO.githubUsername) : "https://github.com/";
   $("#githubHandle").textContent = PORTFOLIO.githubUsername ? "@" + PORTFOLIO.githubUsername : "Add your username in script.js";
-  $("#linkedinLink").href = externalLink(PORTFOLIO.linkedinUrl, "https://www.linkedin.com/");
-  $("#linkedinHandle").textContent = PORTFOLIO.linkedinUrl.includes("yourusername") ? "Add your profile URL" : PORTFOLIO.linkedinUrl.replace(/^https?:\/\/(www\.)?/, "");
+  $("#linkedinLink").href = externalUrl(PORTFOLIO.linkedinUrl, "https://www.linkedin.com/");
+  $("#linkedinHandle").textContent = PORTFOLIO.linkedinUrl && !PORTFOLIO.linkedinUrl.endsWith("linkedin.com/")
+    ? PORTFOLIO.linkedinUrl.replace(/^https?:\/\/(www\.)?/, "") : "Add your profile URL";
   $("#lcUsername").textContent = PORTFOLIO.leetcodeUsername ? "@" + PORTFOLIO.leetcodeUsername : "Add your username in script.js";
-  $("#lcProfileLink").href = PORTFOLIO.leetcodeUsername ? "https://leetcode.com/u/" + encodeURIComponent(PORTFOLIO.leetcodeUsername) + "/" : "https://leetcode.com/";
+  $("#lcProfileLink").href = PORTFOLIO.leetcodeUsername
+    ? "https://leetcode.com/u/" + encodeURIComponent(PORTFOLIO.leetcodeUsername) + "/" : "https://leetcode.com/";
 }
 
 function stat(label, value, sub = "") {
-  return '<div class="lc-stat"><span>' + safe(label) + '</span><strong>' + safe(value ?? "—") + (sub ? ' <em>' + safe(sub) + '</em>' : '') + '</strong></div>';
+  return '<div class="lc-stat"><span>' + safe(label) + '</span><strong>' + safe(value ?? "—") +
+    (sub ? ' <em>' + safe(sub) + '</em>' : '') + '</strong></div>';
+}
+function dayStartMonday(date) {
+  const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  day.setDate(day.getDate() - ((day.getDay() + 6) % 7));
+  return day;
+}
+function dateKey(date) {
+  return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+}
+function renderMonthLabels(start, cellCount) {
+  const months = [];
+  let previousMonth = -1;
+  for (let i = 0; i < cellCount; i++) {
+    const day = new Date(start);
+    day.setDate(start.getDate() + i);
+    if (day.getMonth() !== previousMonth) {
+      months.push({ week: Math.floor(i / 7) + 1, label: day.toLocaleDateString("en", { month: "short" }) });
+      previousMonth = day.getMonth();
+    }
+  }
+  $("#heatmapMonths").innerHTML = months.map(item =>
+    '<span style="grid-column:' + item.week + '">' + safe(item.label) + '</span>'
+  ).join("");
 }
 function renderEmptyHeatmap(message) {
   const grid = $("#heatmapGrid");
-  const now = new Date();
-  const start = new Date(now);
-  start.setDate(start.getDate() - 363);
-  start.setDate(start.getDate() - start.getDay());
+  const today = new Date();
+  const first = new Date(today);
+  first.setDate(first.getDate() - 363);
+  const start = dayStartMonday(first);
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   grid.innerHTML = "";
-  for (let i = 0; i < 364; i++) {
-    const date = new Date(start);
-    date.setDate(start.getDate() + i);
+  let count = 0;
+  for (let date = new Date(start); date <= end && count < 371; date.setDate(date.getDate() + 1)) {
+    const cellDate = new Date(date);
     const cell = document.createElement("span");
     cell.className = "heat-cell";
-    cell.title = date.toLocaleDateString() + ": no data";
+    cell.title = cellDate.toLocaleDateString() + ": no activity data";
     cell.setAttribute("aria-label", cell.title);
     grid.appendChild(cell);
+    count++;
   }
-  $("#heatmapMonths").innerHTML = Array.from({length:12},(_,i)=>'<span>' + new Date(now.getFullYear(), now.getMonth()-11+i, 1).toLocaleDateString("en",{month:"short"}) + '</span>').join("");
+  renderMonthLabels(start, count);
   $("#heatmapSummary").textContent = "Daily activity over the last year";
   $("#heatmapStatus").textContent = message;
 }
 function parseCalendar(data) {
-  let raw = data?.submissionCalendar ?? data?.calendar ?? data?.submission_calendar ?? data?.data?.submissionCalendar ?? data?.data?.calendar;
-  if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch { raw = null; } }
-  if (Array.isArray(raw)) return Object.fromEntries(raw.map(item => [String(item.date ?? item.timestamp ?? ""), Number(item.count ?? item.submissions ?? 0)]));
+  let raw = data?.submissionCalendar ?? data?.calendar ?? data?.submission_calendar ??
+    data?.data?.submissionCalendar ?? data?.data?.calendar;
+  if (typeof raw === "string") {
+    try { raw = JSON.parse(raw); } catch { raw = null; }
+  }
+  if (Array.isArray(raw)) {
+    return Object.fromEntries(raw.map(item => [String(item.date ?? item.timestamp ?? ""), Number(item.count ?? item.submissions ?? 0)]));
+  }
   return raw && typeof raw === "object" ? raw : null;
 }
 function renderHeatmap(calendar) {
-  const entries = Object.entries(calendar || {}).map(([key,value]) => {
+  const normalized = [];
+  for (const [key, rawValue] of Object.entries(calendar || {})) {
     let timestamp = Number(key);
     if (!Number.isFinite(timestamp)) timestamp = Date.parse(key) / 1000;
+    if (!Number.isFinite(timestamp)) continue;
     if (timestamp > 1e12) timestamp /= 1000;
-    const count = typeof value === "object" ? Number(value.count ?? value.submissions ?? 0) : Number(value);
-    return {day:new Date(timestamp * 1000),count:Number.isFinite(count) ? count : 0};
-  }).filter(x => !Number.isNaN(x.day.getTime()));
-  if (!entries.length) { renderEmptyHeatmap("The activity API did not return calendar data."); return; }
-  const byDay = new Map(entries.map(x => [x.day.toISOString().slice(0,10), x.count]));
-  const now = new Date();
-  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const start = new Date(end); start.setDate(start.getDate()-363); start.setDate(start.getDate()-start.getDay());
-  const grid = $("#heatmapGrid"); grid.innerHTML = "";
-  let total = 0, active = 0, max = 0;
-  for (let i=0;i<371;i++) {
-    const date = new Date(start); date.setDate(start.getDate()+i);
-    if (date > end) break;
-    const key = date.toISOString().slice(0,10);
-    const count = byDay.get(key) ?? 0;
-    total += count; if(count>0) active++; max=Math.max(max,count);
-    const level = count===0 ? 0 : count <= 2 ? 1 : count <= 5 ? 2 : count <= 10 ? 3 : 4;
-    const cell = document.createElement("span");
-    cell.className = "heat-cell"; cell.dataset.level = String(level);
-    cell.title = date.toLocaleDateString() + ": " + count + " submission" + (count===1?"":"s");
-    cell.setAttribute("aria-label",cell.title); grid.appendChild(cell);
+    const value = rawValue && typeof rawValue === "object" ? (rawValue.count ?? rawValue.submissions ?? 0) : rawValue;
+    const count = Number(value);
+    const date = new Date(timestamp * 1000);
+    if (Number.isNaN(date.getTime()) || !Number.isFinite(count) || count < 0) continue;
+    normalized.push({ key: dateKey(date), count });
   }
-  const months = []; let lastMonth = -1;
-  for(let i=0;i<grid.children.length;i++){
-    const d=new Date(start);d.setDate(start.getDate()+i);
-    if(d.getMonth()!==lastMonth){months.push({index:i,label:d.toLocaleDateString("en",{month:"short"})});lastMonth=d.getMonth();}
-  }
-  $("#heatmapMonths").innerHTML = months.map(m=>'<span style="grid-column:' + (Math.floor(m.index/7)+1) + '">' + safe(m.label) + '</span>').join("");
-  $("#heatmapSummary").textContent = total.toLocaleString() + " submissions · " + active + " active days · last 12 months";
-  $("#heatmapStatus").textContent = "Activity data loaded · peak day " + max + " submissions";
-}
-async function loadLeetCode() {
-  const username = PORTFOLIO.leetcodeUsername.trim();
-  if (!username) {
-    $("#lcStats").innerHTML = [stat("TOTAL SOLVED","—"),stat("EASY","—"),stat("MEDIUM","—"),stat("HARD","—")].join("");
-    $("#lcUpdated").textContent = "Set username in script.js";
-    renderEmptyHeatmap("Configure a LeetCode username to load activity.");
+  if (!normalized.length) {
+    renderEmptyHeatmap("The activity API returned no usable calendar data.");
     return;
   }
-  $("#lcStats").innerHTML = '<div class="lc-loading">Fetching LeetCode stats…</div>';
-  renderEmptyHeatmap("Loading recent submission activity…");
-  const user = encodeURIComponent(username);
-  const statsUrl = "https://leetcode-stats-api.herokuapp.com/" + user;
-  const calendarUrl = "https://alfa-leetcode-api.onrender.com/" + user + "/calendar";
-  const results = await Promise.allSettled([fetch(statsUrl).then(r=>{if(!r.ok)throw Error("Stats service unavailable");return r.json();}),fetch(calendarUrl).then(r=>{if(!r.ok)throw Error("Calendar service unavailable");return r.json();})]);
-  const statsResult = results[0];
-  if(statsResult.status==="fulfilled" && statsResult.value && statsResult.value.status!=="error" && !statsResult.value.error){
-    const d=statsResult.value;
-    $("#lcStats").innerHTML=[stat("TOTAL SOLVED",d.totalSolved),stat("EASY SOLVED",d.easySolved,d.totalEasy!=null?"/ "+d.totalEasy:""),stat("MEDIUM SOLVED",d.mediumSolved,d.totalMedium!=null?"/ "+d.totalMedium:""),stat("HARD SOLVED",d.hardSolved,d.totalHard!=null?"/ "+d.totalHard:"")].join("");
-    $("#lcUpdated").textContent="Stats loaded · third-party API";
-  } else {
-    $("#lcStats").innerHTML=[stat("TOTAL SOLVED","—"),stat("EASY","—"),stat("MEDIUM","—"),stat("HARD","—")].join("");
-    $("#lcUpdated").textContent="Stats API unavailable";
+  const byDay = new Map(normalized.map(item => [item.key, item.count]));
+  const today = new Date();
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const first = new Date(end);
+  first.setDate(first.getDate() - 363);
+  const start = dayStartMonday(first);
+  const grid = $("#heatmapGrid");
+  grid.innerHTML = "";
+  let total = 0;
+  let active = 0;
+  let max = 0;
+  let visibleDays = 0;
+  for (let date = new Date(start); date <= end && visibleDays < 371; date.setDate(date.getDate() + 1)) {
+    const day = new Date(date);
+    const count = byDay.get(dateKey(day)) ?? 0;
+    total += count;
+    if (count > 0) active++;
+    max = Math.max(max, count);
+    const level = count === 0 ? 0 : count <= 2 ? 1 : count <= 5 ? 2 : count <= 10 ? 3 : 4;
+    const cell = document.createElement("span");
+    cell.className = "heat-cell";
+    cell.dataset.level = String(level);
+    cell.title = day.toLocaleDateString() + ": " + count + " submission" + (count === 1 ? "" : "s");
+    cell.setAttribute("aria-label", cell.title);
+    grid.appendChild(cell);
+    visibleDays++;
   }
-  const calendarResult = results[1];
-  if(calendarResult.status==="fulfilled"){
-    const calendar=parseCalendar(calendarResult.value);
-    if(calendar) renderHeatmap(calendar);
-    else renderEmptyHeatmap("Calendar format was not recognised by the public API.");
-  } else renderEmptyHeatmap("Activity API unavailable or rate-limited. Try refreshing later.");
+  renderMonthLabels(start, visibleDays);
+  $("#heatmapSummary").textContent = total.toLocaleString() + " submissions · " + active + " active days · last 12 months";
+  $("#heatmapStatus").textContent = "Calendar loaded · peak day " + max + " submissions";
 }
-$("#refreshLc").addEventListener("click",loadLeetCode);
-$("#menuToggle").addEventListener("click",()=>{const open=$("#nav").classList.toggle("open");$("#menuToggle").setAttribute("aria-expanded",String(open));});
-document.querySelectorAll("#nav a").forEach(link=>link.addEventListener("click",()=>{$("#nav").classList.remove("open");$("#menuToggle").setAttribute("aria-expanded","false");}));
-$("#projectFilters").addEventListener("click",event=>{
-  const button=event.target.closest("button[data-filter]"); if(!button)return;
-  document.querySelectorAll(".filter").forEach(item=>item.classList.toggle("active",item===button));
-  const filter=button.dataset.filter;let visible=0;
-  document.querySelectorAll(".project-card").forEach(card=>{const show=filter==="all"||card.dataset.category===filter;card.hidden=!show;if(show)visible++;});
-  $("#projectCount").textContent="Showing "+visible+" project"+(visible===1?"":"s")+" · "+(filter==="all"?"All projects":button.textContent);
+async function fetchJson(url, timeoutMs = 10000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal, headers: { "Accept": "application/json" } });
+    if (!response.ok) throw new Error("Request failed (" + response.status + ")");
+    const data = await response.json();
+    if (!data || data.status === "error" || data.error) throw new Error(data?.message || "API returned an error");
+    return data;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+async function fetchLeetCodeStats(username) {
+  const providers = [
+    "https://leetcode-stats-api.herokuapp.com/" + encodeURIComponent(username),
+    "https://leetcode-stats.tashif.codes/" + encodeURIComponent(username)
+  ];
+  let lastError;
+  for (const url of providers) {
+    try {
+      const data = await fetchJson(url);
+      const stats = data.data && typeof data.data === "object" ? data.data : data;
+      if (stats.totalSolved != null || stats.easySolved != null) return stats;
+      throw new Error("API response did not include solved counts");
+    } catch (error) { lastError = error; }
+  }
+  throw lastError || new Error("No LeetCode stats provider responded");
+}
+async function loadLeetCode() {
+  const username = String(PORTFOLIO.leetcodeUsername || "").trim();
+  if (!username) {
+    $("#lcStats").innerHTML = [stat("TOTAL SOLVED", "—"), stat("EASY SOLVED", "—"), stat("MEDIUM SOLVED", "—"), stat("HARD SOLVED", "—")].join("");
+    $("#lcUpdated").textContent = "Set username in script.js";
+    renderEmptyHeatmap("Add your LeetCode username to load activity.");
+    return;
+  }
+  $("#lcStats").innerHTML = '<div class="lc-loading">Loading LeetCode statistics…</div>';
+  $("#lcUpdated").textContent = "Connecting to public API…";
+  $("#heatmapStatus").textContent = "Loading activity calendar…";
+  const user = encodeURIComponent(username);
+  const statsPromise = fetchLeetCodeStats(username);
+  const calendarPromise = fetchJson("https://alfa-leetcode-api.onrender.com/" + user + "/calendar").catch(() => null);
+  const [statsResult, calendarResult] = await Promise.allSettled([statsPromise, calendarPromise]);
+
+  let stats = null;
+  if (statsResult.status === "fulfilled") stats = statsResult.value;
+  if (stats) {
+    $("#lcStats").innerHTML = [
+      stat("TOTAL SOLVED", stats.totalSolved),
+      stat("EASY SOLVED", stats.easySolved, stats.totalEasy != null ? "/ " + stats.totalEasy : ""),
+      stat("MEDIUM SOLVED", stats.mediumSolved, stats.totalMedium != null ? "/ " + stats.totalMedium : ""),
+      stat("HARD SOLVED", stats.hardSolved, stats.totalHard != null ? "/ " + stats.totalHard : "")
+    ].join("");
+    $("#lcUpdated").textContent = "Stats loaded · public API";
+  } else {
+    $("#lcStats").innerHTML = [stat("TOTAL SOLVED", "—"), stat("EASY SOLVED", "—"), stat("MEDIUM SOLVED", "—"), stat("HARD SOLVED", "—")].join("");
+    $("#lcUpdated").textContent = "Stats unavailable · try refresh";
+  }
+
+  const statCalendar = stats ? parseCalendar(stats) : null;
+  const apiCalendar = calendarResult.status === "fulfilled" && calendarResult.value ? parseCalendar(calendarResult.value) : null;
+  if (statCalendar && Object.keys(statCalendar).length) renderHeatmap(statCalendar);
+  else if (apiCalendar && Object.keys(apiCalendar).length) renderHeatmap(apiCalendar);
+  else renderEmptyHeatmap("Activity calendar unavailable or rate-limited; stats may still load.");
+}
+$("#refreshLc").addEventListener("click", () => {
+  $("#refreshLc").disabled = true;
+  $("#refreshLc").textContent = "Refreshing…";
+  loadLeetCode().finally(() => {
+    $("#refreshLc").disabled = false;
+    $("#refreshLc").textContent = "Refresh stats ↻";
+  });
 });
-$("#contactForm").addEventListener("submit",event=>{
-  event.preventDefault();const form=new FormData(event.currentTarget);
-  const subject=encodeURIComponent(form.get("subject"));
-  const body=encodeURIComponent("Name: "+form.get("name")+"\nEmail: "+form.get("email")+"\n\n"+form.get("message"));
-  window.location.href="mailto:"+PORTFOLIO.email+"?subject="+subject+"&body="+body;
+$("#menuToggle").addEventListener("click", () => {
+  const open = $("#nav").classList.toggle("open");
+  $("#menuToggle").setAttribute("aria-expanded", String(open));
+});
+document.querySelectorAll("#nav a").forEach(link => link.addEventListener("click", () => {
+  $("#nav").classList.remove("open");
+  $("#menuToggle").setAttribute("aria-expanded", "false");
+}));
+$("#projectFilters").addEventListener("click", event => {
+  const button = event.target.closest("button[data-filter]");
+  if (!button) return;
+  document.querySelectorAll(".filter").forEach(item => item.classList.toggle("active", item === button));
+  const filter = button.dataset.filter;
+  let visible = 0;
+  document.querySelectorAll(".project-card").forEach(card => {
+    const show = filter === "all" || card.dataset.category === filter;
+    card.hidden = !show;
+    if (show) visible++;
+  });
+  $("#projectCount").textContent = "Showing " + visible + " project" + (visible === 1 ? "" : "s") + " · " +
+    (filter === "all" ? "All projects" : button.textContent.trim());
+});
+$("#contactForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const subject = encodeURIComponent(form.get("subject"));
+  const body = encodeURIComponent("Name: " + form.get("name") + "\nEmail: " + form.get("email") + "\n\n" + form.get("message"));
+  window.location.href = "mailto:" + PORTFOLIO.email + "?subject=" + subject + "&body=" + body;
 });
 renderPortfolio();
-$("#projectCount").textContent="Showing "+PORTFOLIO.projects.length+" projects · All projects";
-renderEmptyHeatmap("Configure a LeetCode username to load activity.");
-loadLeetCode();
+$("#projectCount").textContent = "Showing " + PORTFOLIO.projects.length + " projects · All projects";
+renderEmptyHeatmap("Add your LeetCode username to load activity.");
+loadLeetCode().catch(() => {
+  $("#lcUpdated").textContent = "Stats unavailable · try refresh";
+  renderEmptyHeatmap("Activity API unavailable or rate-limited.");
+});
