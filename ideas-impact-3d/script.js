@@ -221,7 +221,7 @@ function renderHeatmap(calendar) {
   let total = 0;
   let activeDays = 0;
   let peak = 0;
-  for (const date of new Date(start); date <= end && dayCount < 371; date.setUTCDate(date.getUTCDate() + 1)) {
+  for (let date = new Date(start); date <= end && dayCount < 371; date.setUTCDate(date.getUTCDate() + 1)) {
     const day = new Date(date);
     const submissions = activity.get(utcDateKey(day)) || 0;
     total += submissions;
