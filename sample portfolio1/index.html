@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A personal portfolio showcasing projects, skills, certificates, and coding profiles." />
+  <title>Your Name — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="site-header shell">
+    <a class="brand" href="#home"><span class="brand-mark">✦</span><span data-name>Your Name</span></a>
+    <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#home" class="active">Home</a><a href="#about">About</a><a href="#projects">Projects</a><a href="#coding">Coding</a><a href="#certificates">Certificates</a>
+    </nav>
+    <a class="button button-small button-orange" href="#contact">Let’s Talk <span>↗</span></a>
+  </header>
+
+  <main>
+    <section class="hero shell" id="home">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="status-dot"></span> AVAILABLE FOR OPPORTUNITIES</div>
+        <p class="hero-kicker">HELLO, WORLD — I'M</p>
+        <h1><span data-name>Your Name</span><br><em><span data-role>Developer & Creative Thinker</span></em></h1>
+        <p class="hero-description">I build thoughtful digital experiences, solve problems, and turn ideas into useful projects.</p>
+        <div class="hero-actions">
+          <a class="button button-orange" href="#projects">Explore My Work <span>↗</span></a>
+          <a class="button button-outline" href="#contact">✉ Contact Me</a>
+        </div>
+        <div class="hero-socials">
+          <a data-link="github" href="#" target="_blank" rel="noreferrer">GitHub ↗</a>
+          <a data-link="linkedin" href="#" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+          <a data-link="leetcode" href="#" target="_blank" rel="noreferrer">LeetCode ↗</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="portrait-glow"></div>
+        <div class="portrait-frame">
+          <!-- Add your photo at assets/images/profile.jpg and keep this path, or change it here. -->
+          <img src="./assets/images/profile.jpg" alt="Your portrait" class="portrait" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <div class="photo-placeholder"><span>PHOTO</span><small>Add profile.jpg<br>to assets/images/</small></div>
+        </div>
+        <div class="floating-note note-top"><span class="note-icon">✳</span><span><b>Curious mind</b><small>Always learning</small></span></div>
+        <div class="floating-note note-bottom"><span class="note-icon">⌘</span><span><b>Building things</b><small>One project at a time</small></span></div>
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+      </div>
+      <div class="hero-bottom"><span>BASED IN <b data-location>Your City, Country</b></span><span>SCROLL TO EXPLORE <span class="scroll-arrow">↓</span></span></div>
+    </section>
+
+    <section class="section shell" id="about">
+      <div class="section-heading"><p class="eyebrow">01 / A LITTLE ABOUT ME</p><h2>Driven by curiosity.<br><em>Defined by what I create.</em></h2></div>
+      <div class="about-grid">
+        <p class="about-lead">I'm <span data-name>Your Name</span> — <span data-role>Developer & Creative Thinker</span> with an interest in building useful, user-friendly digital experiences.</p>
+        <div class="about-detail"><p>Use this section to write a short introduction about your background, interests, education, and goals. Keep it genuine and focused on what you want visitors to remember.</p><div class="tag-list"><span>Problem Solving</span><span>Web Development</span><span>Continuous Learning</span><span>Teamwork</span></div></div>
+      </div>
+    </section>
+
+    <section class="section shell" id="projects">
+      <div class="section-topline"><div class="section-heading"><p class="eyebrow">02 / SELECTED WORK</p><h2>Projects with <em>purpose.</em></h2></div><span class="section-count">01 — 03</span></div>
+      <div class="project-grid">
+        <article class="project-card project-feature">
+          <div class="project-art art-one"><span class="art-label">PROJECT PREVIEW</span><span class="art-symbol">✳</span><div class="art-lines"></div></div>
+          <div class="project-info"><div><p class="project-type">01 / WEB PROJECT</p><h3>Project Name One</h3></div><a class="round-link" data-project-link="1" href="#" target="_blank" rel="noreferrer" aria-label="Open project one">↗</a></div>
+          <p class="project-description">Add a short description of the problem, your solution, and the tools you used.</p><div class="tag-list"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+        </article>
+        <article class="project-card">
+          <div class="project-art art-two"><span class="art-label">PROJECT PREVIEW</span><span class="art-symbol">⌘</span><div class="art-circle"></div></div>
+          <div class="project-info"><div><p class="project-type">02 / APPLICATION</p><h3>Project Name Two</h3></div><a class="round-link" data-project-link="2" href="#" target="_blank" rel="noreferrer" aria-label="Open project two">↗</a></div>
+          <p class="project-description">Describe what you built and the main feature that makes it useful.</p><div class="tag-list"><span>Technology</span><span>Technology</span></div>
+        </article>
+        <article class="project-card">
+          <div class="project-art art-three"><span class="art-label">PROJECT PREVIEW</span><span class="art-symbol">✦</span><div class="art-grid"></div></div>
+          <div class="project-info"><div><p class="project-type">03 / EXPERIMENT</p><h3>Project Name Three</h3></div><a class="round-link" data-project-link="3" href="#" target="_blank" rel="noreferrer" aria-label="Open project three">↗</a></div>
+          <p class="project-description">Add another project, college assignment, or personal experiment here.</p><div class="tag-list"><span>Technology</span><span>Technology</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section shell" id="coding">
+      <div class="section-heading"><p class="eyebrow">03 / MY DIGITAL FOOTPRINT</p><h2>Learning in public.<br><em>Improving every day.</em></h2></div>
+      <div class="coding-grid">
+        <article class="profile-card leetcode-card">
+          <div class="profile-card-head"><span class="platform-icon">⌁</span><div><p class="project-type">CODING PRACTICE</p><h3>LeetCode Tracker</h3></div><a data-link="leetcode" href="#" target="_blank" rel="noreferrer" class="external-link">↗</a></div>
+          <p class="muted">Add your profile link and update these numbers whenever you want. This starter template does not fetch live stats automatically.</p>
+          <div class="leetcode-stats">
+            <div class="solved-ring"><div><strong data-stat="solved">000</strong><small>solved</small></div></div>
+            <div class="stat-list"><div><span>Easy</span><b data-stat="easy">000</b></div><div><span>Medium</span><b data-stat="medium">000</b></div><div><span>Hard</span><b data-stat="hard">000</b></div></div>
+          </div>
+          <div class="tracker-label"><span>MY PRACTICE TRACKER</span><span data-stat="streak">0 day streak</span></div>
+          <div class="activity-grid" id="activity-grid" aria-label="Illustrative coding activity tracker"></div>
+          <p class="tiny-note">Tracker is a visual placeholder. Replace the sample activity with real data if you add an API later.</p>
+          <a class="text-link" data-link="leetcode" href="#" target="_blank" rel="noreferrer">Visit LeetCode profile <span>↗</span></a>
+        </article>
+        <article class="profile-card github-card">
+          <div class="profile-card-head"><span class="platform-icon">⌘</span><div><p class="project-type">OPEN SOURCE</p><h3>GitHub</h3></div><a data-link="github" href="#" target="_blank" rel="noreferrer" class="external-link">↗</a></div>
+          <div class="github-placeholder"><span class="github-big">⌘</span><p>Code, experiments<br>& things I'm building.</p><span class="placeholder-label">GITHUB ACTIVITY / PROFILE PREVIEW</span></div>
+          <div class="profile-link-row"><span>Username</span><b data-handle="github">@yourusername</b></div>
+          <a class="text-link" data-link="github" href="#" target="_blank" rel="noreferrer">Explore repositories <span>↗</span></a>
+        </article>
+        <article class="profile-card linkedin-card">
+          <div class="profile-card-head"><span class="platform-icon">in</span><div><p class="project-type">PROFESSIONAL NETWORK</p><h3>LinkedIn</h3></div><a data-link="linkedin" href="#" target="_blank" rel="noreferrer" class="external-link">↗</a></div>
+          <div class="linkedin-preview"><div class="linkedin-banner"></div><div class="linkedin-avatar">PHOTO</div><div class="linkedin-copy"><b data-name>Your Name</b><span data-role>Developer & Creative Thinker</span><small data-location>Your City, Country</small></div></div>
+          <p class="muted">Connect with me for projects, collaboration, and professional opportunities.</p>
+          <a class="text-link" data-link="linkedin" href="#" target="_blank" rel="noreferrer">View LinkedIn profile <span>↗</span></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section shell" id="certificates">
+      <div class="section-topline"><div class="section-heading"><p class="eyebrow">04 / LEARNING & MILESTONES</p><h2>Proof of <em>progress.</em></h2></div><span class="section-count">CERTIFICATES</span></div>
+      <div class="certificate-grid">
+        <article class="certificate-card"><div class="certificate-preview"><span>✧</span><small>CERTIFICATE PREVIEW</small></div><div class="certificate-info"><div><h3>Certificate Name One</h3><p>Issuing organization · Year</p></div><a class="round-link" data-certificate-link="1" href="#" target="_blank" rel="noreferrer" aria-label="View certificate one">↗</a></div></article>
+        <article class="certificate-card"><div class="certificate-preview certificate-preview-two"><span>✦</span><small>CERTIFICATE PREVIEW</small></div><div class="certificate-info"><div><h3>Certificate Name Two</h3><p>Issuing organization · Year</p></div><a class="round-link" data-certificate-link="2" href="#" target="_blank" rel="noreferrer" aria-label="View certificate two">↗</a></div></article>
+        <article class="certificate-card"><div class="certificate-preview certificate-preview-three"><span>✳</span><small>CERTIFICATE PREVIEW</small></div><div class="certificate-info"><div><h3>Certificate Name Three</h3><p>Issuing organization · Year</p></div><a class="round-link" data-certificate-link="3" href="#" target="_blank" rel="noreferrer" aria-label="View certificate three">↗</a></div></article>
+      </div>
+      <p class="section-footnote">Replace these cards with your actual certificates. You can link a PDF or image stored in the repository.</p>
+    </section>
+
+    <section class="contact-section shell" id="contact">
+      <div class="contact-panel"><p class="eyebrow">05 / YOUR NEXT IDEA STARTS HERE</p><h2>Have a project in mind?<br><em>Let’s create it together.</em></h2><p>Open to meaningful projects, new opportunities, and good conversations.</p><a class="button button-orange" data-link="email" href="mailto:your.email@example.com">Get in touch <span>↗</span></a><div class="contact-orbit">✳</div></div>
+    </section>
+  </main>
+  <footer class="site-footer shell"><a class="brand" href="#home"><span class="brand-mark">✦</span><span data-name>Your Name</span></a><p>Designed with intention. Built with curiosity.</p><span>© <span id="year"></span> <span data-name>Your Name</span></span></footer>
+</body>
+</html>
