@@ -85,7 +85,7 @@ form.addEventListener("submit", function (event) {
     message,
     "",
     "Sent from the business enquiry website."
-  ].join("\\n");
+  ].join("\n");
 
   const mailto = "mailto:" + BUSINESS_EMAIL +
     "?subject=" + encodeURIComponent(subject) +
